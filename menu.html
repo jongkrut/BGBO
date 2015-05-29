@@ -1,0 +1,34 @@
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="history">History</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container">
+
+  <h3 class="pull-left">Menus</h3>
+  <button ng-click="newMenu()" style="margin-top:15px" class="btn btn-primary pull-right">+ New</button>
+  <table class="table table-bordered">
+    <thead>
+        <tr><th>ID<th>Menu<th>Subname<th>Recipe URL<th>Action
+    </thead>
+    <tbody>
+      <tr ng-repeat="box in data">
+        <td>{{box.menu_id}}
+        <td>{{box.menu_name}}
+        <td>{{box.menu_subname}}
+        <td>{{box.menu_url}}
+        <td><a class="btn btn-default" ng-href="#/menu-edit/{{box.menu_id}}">Edit</button>
+  </table>
+</div>

@@ -1,0 +1,31 @@
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="history">History</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <table class="table table-bordered">
+    <thead>
+        <tr><th>ID<th>Menus<th>Delivery Date Start<th>Delivery Date End<th>Action
+    </thead>
+    <tbody>
+      <tr ng-repeat="box in data">
+        <td>{{box.box_id}}
+        <td>{{box.menu_name}}
+        <td>{{box.box_start | date}}
+        <td>{{box.box_end | date}}
+        <td><button class="button">Edit</button>
+  </table>
+</div>

@@ -1,1 +1,64 @@
-asd
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="history">History</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <nav>
+    <ul class="pager">
+      <li class="previous"><a ng-click="getCurrent();" style="cursor:pointer"><span aria-hidden="true">&larr;</span> Current Week</a></li>
+      <li style="font-size:20px;font-weight:bold">{{title}}</li>
+      <li class="next"><a ng-click="getNext();" style="cursor:pointer">Next Week <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+  </nav>
+
+  <a class="btn" ng-click="exportCSV()" >Export to CSV</a>
+
+  <table class="table table-bordered">
+    <thead>
+        <tr><th>ID<th>Date<th>Name<th>Grandtotal<th>Payment<th>Status<th>Action
+    </thead>
+    <tbody>
+    <tr ng-repeat="order in data | orderBy:['-payment_status','-order_status','order_date']">
+      <td>{{order.order_id}}
+      <td>{{order.order_date | date:'EEE, dd MMM' }}
+      <td>{{order.customer_name}}<br/><small>{{order.address_content}}</small>
+      <td>{{order.grandtotal | number}}
+      <td><ostat ng-switch="order.payment_status">
+              <span ng-switch-when="0" style="color:red">Unpaid</span>
+              <span ng-switch-when="1" style="color:green">Paid</span>
+          </ostat>
+      <td><ostat ng-switch="order.order_status">
+              <span ng-switch-when="-1" class="label label-warning">Cancelled</span>
+              <span ng-switch-when="0" class="label label-default">Pending</span>
+              <span ng-switch-when="1" class="label label-info">Confirmed</span>
+              <span ng-switch-when="2" class="label label-success">Delivered</span>
+          </ostat>
+      </td>
+      <td><div class="btn-group" dropdown is-open="status.isopen" ng-hide="order.order_status==2 || order.order_status == -1 || (order.order_status == 0 && order.payment_status == 1)">
+              <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                Action <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                  <li><a ng-click="markComplete(order.order_id)" ng-show="order.order_status==1">Complete</a></li>
+                  <li><a ng-click="markCancel(order.order_id)" ng-show="order.order_status == 0 && order.payment_status == 0">Cancel</a></li>
+                  <li><a ng-click="markPaid(order.order_id)" ng-show="order.payment_status==0">Mark Paid</a></li>
+              </ul>
+          </div
+      </td>
+    </tbody>
+  </table>
+</div>
