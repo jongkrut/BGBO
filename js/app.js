@@ -162,10 +162,65 @@ app.controller('boxCtrl',function($scope,$http){
   });
 });
 
-app.controller('menuEditCtrl',function($scope,$http,$stateParams) {
+app.controller('menuEditCtrl',function($scope,$http,$stateParams,$modal) {
   $scope.menu_id = $stateParams.menu_id;
   $scope.data = {};
+  $scope.newIngr = {};
+  $scope.ingredients = {};
+  $scope.usedIngr = {};
+  $scope.editted = false;
   $http.get("http://128.199.236.141:7000/bo/menu/" + $scope.menu_id).success(function(data, status) {
     $scope.data = JSON.parse(data);
+    $scope.usedIngr = $scope.data[1].ingredients;
+
+    $http.get("http://128.199.236.141:7000/bo/ingredient/").success(function(data, status) {
+      $scope.ingredients = JSON.parse(data).filter(function(val){
+        for(var i = 0;i<$scope.usedIngr.length;i++) {
+          if(val.ingredient_id == $scope.usedIngr[i].ingredient_id)
+            return false;
+        }
+        return true;
+      });
+    });
   });
+
+  $scope.openModal = function () {
+    $scope.modal = $modal.open({
+      animation: true,
+      scope : $scope,
+      templateUrl: 'ModalIngredient.html',
+      size: 'lg',
+    });
+  };
+  $scope.closeModal = function() {
+    $scope.modal.close();
+  };
+  $scope.saveIngredient = function(){
+    $http.post("http://128.199.236.141:7000/bo/ingredient/", $scope.newIngr).success(function(data, status) {
+      $scope.newIngr = {};
+      $scope.modal.close();
+    });
+  };
+
+  $scope.addToList = function(ingred) {
+    $scope.ingredients.splice($scope.ingredients.indexOf(ingred),1);
+    $scope.usedIngr.push(ingred);
+    $scope.editted = true;
+  };
+
+  $scope.removeFromList = function(ingred) {
+    $scope.usedIngr.splice($scope.usedIngr.indexOf(ingred),1);
+    $scope.ingredients.push(ingred);
+    $scope.editted = true;
+  };
+
+  $scope.saveIngredients = function() {
+    var data = { "menu_id": $scope.menu_id,"ingredients" : [] };
+    for(var i = 0 ; i < $scope.usedIngr.length;i++) {
+      data.ingredients.push({ "ingredient_id" : $scope.usedIngr[i].ingredient_id});
+    }
+    $http.post("http://128.199.236.141:7000/bo/menu/ingredient/", data).success(function(data, status) {
+      $scope.editted = false;
+    });
+  };
 });

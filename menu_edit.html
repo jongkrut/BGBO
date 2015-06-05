@@ -1,3 +1,80 @@
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%"/>
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="history">History</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  {{data | json}}
+  <h3>Menu Edit</h3>
+
+  <table class="table table-bordered">
+      <tr>
+          <th>Menu Name
+          <td>{{data[0].menu_name}}
+      <tr>
+          <th>Menu Subname
+          <td>{{data[0].menu_subname}}
+      <tr>
+          <th>URL
+            <td>{{data[0].menu_url}}
+  </table>
+
+
+
+  <h4>Active</h4>
+  <div class="rows">
+    <div class="col-md-3" ng-show="editted">
+      <div style="padding:10px;margin-top:10px;cursor:pointer" class="bg-primary" ng-click="saveIngredients();" >
+        Save
+        <i class="fa fa-check pull-right"></i>
+      </div>
+    </div>
+    <div class="col-md-3" ng-repeat="ingr in usedIngr | orderBy :'ingredient_name'" style="cursor:pointer">
+        <div style="border:1px solid #ddd;padding:10px;margin-top:10px" ng-click="removeFromList(ingr)" >
+          {{ingr.ingredient_name}}
+          <i class="fa fa-close pull-right"></i>
+        </div>
+    </div>
+  </div>
+
+  <div style="float:left;width:100%;margin:20px 0 0px">
+    <h4 class="pull-left">Available</h4>
+    <button class="btn btn-primary pull-right" ng-click="openModal()">+New</button>
+  </div>
+
+  <div class="rows">
+        <div class="col-md-3" ng-repeat="ingr in ingredients | orderBy : 'ingredient_name' track by $index" ng-click="addToList(ingr)" style="cursor:pointer;">
+          <div style="border:1px solid #ddd;padding:10px;margin-top:10px;">
+              {{ingr.ingredient_name}}
+              <i class="fa fa-plus pull-right"></i>
+            </div>
+        </div>
+  </div>
+
 </div>
+
+
+<script type="text/ng-template" id="ModalIngredient.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Ingredient</h3>
+        </div>
+        <div class="modal-body">
+          <input type="text" ng-model="newIngr.ingredient_name"/>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="saveIngredient()">Save</button>
+            <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+        </div>
+</script>
