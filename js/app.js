@@ -61,6 +61,13 @@ app.config(function($stateProvider,$urlRouterProvider){
     data : {
       requireLogin : true
     }
+  }).state('menu-new',{
+    url: "/menu-new/",
+    templateUrl : 'menu_new.html',
+    controller : 'menuNewCtrl',
+    data : {
+      requireLogin : true
+    }
   });
 });
 
@@ -148,11 +155,14 @@ app.controller('exportCtrl',function($scope,$http){
   });
 });
 
-app.controller('menuCtrl',function($scope,$http){
+app.controller('menuCtrl',function($scope,$http,$state){
   $scope.data = {};
   $http.get("http://128.199.236.141:7000/bo/menu/").success(function(data, status) {
     $scope.data = JSON.parse(data);
   });
+  $scope.newMenu = function(){
+    $state.go('menu-new');
+  };
 });
 
 app.controller('boxCtrl',function($scope,$http){
@@ -165,10 +175,11 @@ app.controller('boxCtrl',function($scope,$http){
 app.controller('menuEditCtrl',function($scope,$http,$stateParams,$modal) {
   $scope.menu_id = $stateParams.menu_id;
   $scope.data = {};
-  $scope.newIngr = {};
+  $scope.newIngr = {};$scope.newIngr.addToUsedIngr=true;
   $scope.ingredients = {};
   $scope.usedIngr = {};
   $scope.editted = false;
+
   $http.get("http://128.199.236.141:7000/bo/menu/" + $scope.menu_id).success(function(data, status) {
     $scope.data = JSON.parse(data);
     $scope.usedIngr = $scope.data[1].ingredients;
@@ -197,6 +208,10 @@ app.controller('menuEditCtrl',function($scope,$http,$stateParams,$modal) {
   };
   $scope.saveIngredient = function(){
     $http.post("http://128.199.236.141:7000/bo/ingredient/", $scope.newIngr).success(function(data, status) {
+      if($scope.newIngr.addToUsedIngr==true)
+        $scope.usedIngr.push({"ingredient_name":$scope.newIngr.ingredient_name , "ingredient_id" : data.id});
+      else
+        $scope.ingredients.push({"ingredient_name":$scope.newIngr.ingredient_name , "ingredient_id" : data.id});
       $scope.newIngr = {};
       $scope.modal.close();
     });
@@ -223,4 +238,52 @@ app.controller('menuEditCtrl',function($scope,$http,$stateParams,$modal) {
       $scope.editted = false;
     });
   };
+});
+
+
+app.controller('menuNewCtrl',function($scope,$http,$modal) {
+  $scope.data = {};
+  $scope.newIngr = {};$scope.newIngr.addToUsedIngr=true;
+  $scope.ingredients = {};
+  $scope.usedIngr = {};
+  $scope.editted = false;
+
+  $http.get("http://128.199.236.141:7000/bo/ingredient/").success(function(data, status) {
+    $scope.ingredients = JSON.parse(data);
+  });
+
+  $scope.openModal = function () {
+    $scope.modal = $modal.open({
+      animation: true,
+      scope : $scope,
+      templateUrl: 'ModalIngredient.html',
+      size: 'lg',
+    });
+  };
+  $scope.closeModal = function() {
+    $scope.modal.close();
+  };
+  $scope.saveIngredient = function(){
+    $http.post("http://128.199.236.141:7000/bo/ingredient/", $scope.newIngr).success(function(data, status) {
+      if($scope.newIngr.addToUsedIngr==true)
+        $scope.usedIngr.push({"ingredient_name":$scope.newIngr.ingredient_name , "ingredient_id" : data.id});
+      else
+        $scope.ingredients.push({"ingredient_name":$scope.newIngr.ingredient_name , "ingredient_id" : data.id});
+      $scope.newIngr = {};
+      $scope.modal.close();
+    });
+  };
+
+  $scope.addToList = function(ingred) {
+    $scope.ingredients.splice($scope.ingredients.indexOf(ingred),1);
+    $scope.usedIngr.push(ingred);
+    $scope.editted = true;
+  };
+
+  $scope.removeFromList = function(ingred) {
+    $scope.usedIngr.splice($scope.usedIngr.indexOf(ingred),1);
+    $scope.ingredients.push(ingred);
+    $scope.editted = true;
+  };
+
 });

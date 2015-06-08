@@ -35,12 +35,13 @@
     <tr ng-repeat="order in data | orderBy:['-payment_status','-order_status','order_date']">
       <td>{{order.order_id}}
       <td>{{order.order_date | date:'EEE, dd MMM' }}
-      <td>{{order.customer_name}}<br/><small>{{order.address_content}}</small>
+      <td>{{order.customer_name}}<small> {{order.customer_email}}<br/>{{order.address_content}}</small>
       <td>{{order.grandtotal | number}}
       <td><ostat ng-switch="order.payment_status">
               <span ng-switch-when="0" style="color:red">Unpaid</span>
               <span ng-switch-when="1" style="color:green">Paid</span>
           </ostat>
+          <br/><small>{{order.payment_method}}</small>
       <td><ostat ng-switch="order.order_status">
               <span ng-switch-when="-1" class="label label-warning">Cancelled</span>
               <span ng-switch-when="0" class="label label-default">Pending</span>
