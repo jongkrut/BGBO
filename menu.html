@@ -29,6 +29,14 @@
         <td>{{box.menu_name}}
         <td>{{box.menu_subname}}
         <td>{{box.menu_url}}
-        <td><a class="btn btn-info" ng-href="#/menu-edit/{{box.menu_id}}"><i class="fa fa-pencil-square-o"></i> Edit</button>
+        <td><div class="btn-group" dropdown>
+                <a class="btn btn-info" ng-href="#/menu-edit/{{box.menu_id}}">Edit</a>
+                <button type="button" class="btn btn-info dropdown-toggle" dropdown-toggle>
+                  <span class="caret"></span><span class="sr-only">Split button!</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a ng-href="#/recipe-edit/{{box.menu_id}}">Edit Recipe</a></li>
+                </ul>
+            </div>
   </table>
 </div>

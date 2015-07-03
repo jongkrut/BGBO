@@ -1,0 +1,61 @@
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="history">History</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+
+<div class="panel panel-default" ng-repeat="step in steps | orderBy:'steps_order' ">
+    <div class="panel-heading">
+        {{step.steps_order}}
+    </div>
+    <div class="panel-body">
+      <div class="col-lg-6">
+        {{step.content_id}}
+      </div>
+
+      <div class="col-lg-6">
+        {{step.content_en}}
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+  <form class="form form-inline">
+    <div class="panel-heading">
+      <div class="form-group">
+      <label for="exampleInputName2">Name </label>
+        <input type="number" class="form-control" ng-model="form.steps.num" placeholder="Steps">
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="rows">
+        <div class="col-lg-6">
+          <textarea class="form-control col-lg-6" ng-model="form.steps.ind">
+          </textarea>
+        </div>
+
+        <div class="col-lg-6">
+          <textarea class="form-control" ng-model="form.steps.eng">
+          </textarea>
+        </div>
+      </div>
+    </div>
+    <button class="btn" ng-click="saveThisStep()">Save</button>
+  </form>
+</div>
+
+
+</div>
