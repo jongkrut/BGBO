@@ -75,6 +75,13 @@ app.config(function($stateProvider,$urlRouterProvider){
     data : {
       requireLogin : true
     }
+  }).state('history', {
+    url: "/history",
+    templateUrl : 'history.html',
+    controller : 'historyCtrl',
+    data : {
+      requireLogin : true
+    }
   });
 });
 
@@ -101,7 +108,10 @@ app.controller('loginCtrl',function($scope,$rootScope,$state,$http,Operator){
 
 app.controller('pendingCtrl',function($scope,$http,$window){
   $scope.data = {};
-  $scope.title = "Current Week";
+
+  $scope.timerange = moment().startOf('week').format('YYYY-MM-DD');
+  $scope.title = "Week of " + $scope.timerange;
+
   $http.get("http://api.blackgarlic.id:7000/bo/order/").success(function(data, status) {
     $scope.data = JSON.parse(data);
   });
@@ -145,6 +155,12 @@ app.controller('pendingCtrl',function($scope,$http,$window){
         $scope.data = JSON.parse(data);
         $scope.title = "Current Week";
       });
+    });
+  };
+  $scope.markDelivery = function(order_id){
+    var order_id = order_id;
+    $http.post("http://api.blackgarlic.id:7000/bo/order/delivery/", { "order_id" : order_id} ).success(function(data, status) {
+      console.log(data);
     });
   };
   $scope.exportCSV = function () {
@@ -317,4 +333,15 @@ app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal) {
   $scope.saveSteps = function() {
     console.log(JSON.stringify($scope.steps));
   };
+});
+
+app.controller('historyCtrl',function($scope,$http){
+  $scope.months = ['June','July','August'];
+  $scope.data = {};
+
+  $scope.showOrders = function(mnth){
+    $http.get("http://api.blackgarlic.id:7000/bo/history/"+mnth.month, $scope.newIngr).success(function(data, status) {
+        console.log(data);
+    });
+  }
 });

@@ -1,0 +1,32 @@
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="history">History</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="form-group">
+    <label for="select_mnth" class="col-sm-1 control-label">Month:</label>
+    <div class="col-sm-8">
+      <select class="form-control" id="select_mnth" ng-model="data.month">
+        <option ng-repeat="mnth in months" ng-value="mnth">{{mnth}}</option>
+      </select>
+    </div>
+    <div class="col-sm-3">
+        <button class="btn btn-block btn-primary" ng-click="showOrders(data)">Show</button>
+    </div>
+  </div>
+
+</div>

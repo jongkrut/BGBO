@@ -24,6 +24,7 @@
     </ul>
   </nav>
 
+  {{timerange}}
   <a class="btn" ng-click="exportCSV()" >Export to CSV</a>
 
   <table class="table table-bordered">
@@ -56,6 +57,8 @@
                   <li><a ng-click="markComplete(order.order_id)" ng-show="order.order_status==1">Complete</a></li>
                   <li><a ng-click="markCancel(order.order_id)" ng-show="order.order_status == 0 && order.payment_status == 0">Cancel</a></li>
                   <li><a ng-click="markPaid(order.order_id)" ng-show="order.payment_status==0">Mark Paid</a></li>
+                  <li><a ng-click="markDelivery(order.order_id)" ng-show="order.payment_status==1">Send Delivery</a></li>
+
               </ul>
           </div
       </td>
