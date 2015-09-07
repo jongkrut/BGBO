@@ -112,48 +112,47 @@ app.controller('pendingCtrl',function($scope,$http,$window){
   $scope.timerange = moment().startOf('week').format('YYYY-MM-DD');
   $scope.title = "Week of " + $scope.timerange;
 
-  $http.get("http://api.blackgarlic.id:7000/bo/order/").success(function(data, status) {
+  $http.get("http://api.blackgarlic.id:7000/bo/order/week/" + $scope.timerange).success(function(data, status) {
     $scope.data = JSON.parse(data);
   });
 
   $scope.getNext = function() {
-    $http.get("http://api.blackgarlic.id:7000/bo/order/next").success(function(data, status) {
+    $scope.timerange = moment($scope.timerange).add(1,'w').format('YYYY-MM-DD');
+    $http.get("http://api.blackgarlic.id:7000/bo/order/week/"+$scope.timerange).success(function(data, status) {
       $scope.data = JSON.parse(data);
-      $scope.title = "Next Week";
+      $scope.title = "Week of " + $scope.timerange;
     });
   };
 
   $scope.getCurrent = function() {
-    $http.get("http://api.blackgarlic.id:7000/bo/order/").success(function(data, status) {
+    $scope.timerange = moment($scope.timerange).subtract(1,'w').format('YYYY-MM-DD');
+    $http.get("http://api.blackgarlic.id:7000/bo/order/week/"+$scope.timerange).success(function(data, status) {
       $scope.data = JSON.parse(data);
-      $scope.title = "Current Week";
+      $scope.title = "Week of " + $scope.timerange;
     });
   };
 
   $scope.markPaid = function(order_id) {
     var order_id = order_id;
     $http.post("http://api.blackgarlic.id:7000/bo/order/paid/", { "order_id" : order_id} ).success(function(data, status) {
-      $http.get("http://api.blackgarlic.id:7000/bo/order/next").success(function(data, status) {
+      $http.get("http://api.blackgarlic.id:7000/bo/order/week/"+$scope.timerange).success(function(data, status) {
         $scope.data = JSON.parse(data);
-        $scope.title = "Next Week";
       });
     });
   };
   $scope.markCancel = function(order_id) {
     var order_id = order_id;
     $http.post("http://api.blackgarlic.id:7000/bo/order/cancel/", { "order_id" : order_id} ).success(function(data, status) {
-      $http.get("http://api.blackgarlic.id:7000/bo/order/next").success(function(data, status) {
+      $http.get("http://api.blackgarlic.id:7000/bo/order/week/"+$scope.timerange).success(function(data, status) {
         $scope.data = JSON.parse(data);
-        $scope.title = "Next Week";
       });
     });
   };
   $scope.markComplete = function(order_id){
     var order_id = order_id;
     $http.post("http://api.blackgarlic.id:7000/bo/order/complete/", { "order_id" : order_id} ).success(function(data, status) {
-      $http.get("http://api.blackgarlic.id:7000/bo/order/").success(function(data, status) {
+      $http.get("http://api.blackgarlic.id:7000/bo/order/week/"+$scope.timerange).success(function(data, status) {
         $scope.data = JSON.parse(data);
-        $scope.title = "Current Week";
       });
     });
   };
@@ -164,10 +163,7 @@ app.controller('pendingCtrl',function($scope,$http,$window){
     });
   };
   $scope.exportCSV = function () {
-      if($scope.title == "Current Week")
-        $window.location.href = "http://api.blackgarlic.id:7000/bo/orderdl/current"
-      else
-        $window.location.href = "http://api.blackgarlic.id:7000/bo/orderdl/next";
+    $window.location.href = "http://api.blackgarlic.id:7000/bo/orderdl/" + $scope.timerange;
   };
 });
 

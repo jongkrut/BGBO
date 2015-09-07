@@ -18,13 +18,11 @@
 <div class="container">
   <nav>
     <ul class="pager">
-      <li class="previous"><a ng-click="getCurrent();" style="cursor:pointer"><span aria-hidden="true">&larr;</span> Current Week</a></li>
+      <li class="previous"><a ng-click="getCurrent();" style="cursor:pointer"><span aria-hidden="true">&larr;</span> Previous Week</a></li>
       <li style="font-size:20px;font-weight:bold">{{title}}</li>
       <li class="next"><a ng-click="getNext();" style="cursor:pointer">Next Week <span aria-hidden="true">&rarr;</span></a></li>
     </ul>
   </nav>
-
-  {{timerange}}
   <a class="btn" ng-click="exportCSV()" >Export to CSV</a>
 
   <table class="table table-bordered">
@@ -33,10 +31,11 @@
     </thead>
     <tbody>
     <tr ng-repeat="order in data | orderBy:['-payment_status','-order_status','order_date']">
-      <td>{{order.order_id}}
+      <td>{{order.unique_id}}<br/>{{order.order_id}}
       <td>{{order.order_date | date:'EEE, dd MMM' }}
       <td>{{order.customer_name}}<small> {{order.customer_email}}<br/>{{order.address_content}}</small>
-      <td>{{order.grandtotal | number}}
+      <td>{{order.grandtotal | number}}<br/>
+          <em><span ng-if="order.box_type==1">2 Person</span><span ng-if="order.box_type==2">Family</span></em>
       <td><ostat ng-switch="order.payment_status">
               <span ng-switch-when="0" style="color:red">Unpaid</span>
               <span ng-switch-when="1" style="color:green">Paid</span>
@@ -57,8 +56,6 @@
                   <li><a ng-click="markComplete(order.order_id)" ng-show="order.order_status==1">Complete</a></li>
                   <li><a ng-click="markCancel(order.order_id)" ng-show="order.order_status == 0 && order.payment_status == 0">Cancel</a></li>
                   <li><a ng-click="markPaid(order.order_id)" ng-show="order.payment_status==0">Mark Paid</a></li>
-                  <li><a ng-click="markDelivery(order.order_id)" ng-show="order.payment_status==1">Send Delivery</a></li>
-
               </ul>
           </div
       </td>
