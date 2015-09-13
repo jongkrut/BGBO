@@ -75,10 +75,10 @@ app.config(function($stateProvider,$urlRouterProvider){
     data : {
       requireLogin : true
     }
-  }).state('history', {
-    url: "/history",
-    templateUrl : 'history.html',
-    controller : 'historyCtrl',
+  }).state('ordering', {
+    url: "/ordering/",
+    templateUrl : 'ordering.html',
+    controller : 'orderingCtrl',
     data : {
       requireLogin : true
     }
@@ -338,21 +338,57 @@ app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal) {
     $scope.form.steps.eng = $scope.steps[step].content_en;
   };
 
-  
-
-
   $scope.saveSteps = function() {
     console.log(JSON.stringify($scope.steps));
   };
 });
 
-app.controller('historyCtrl',function($scope,$http){
-  $scope.months = ['June','July','August'];
+app.controller('orderingCtrl',function($scope,$http,$filter,$state){
+  $scope.minDate = new Date();
   $scope.data = {};
+  $scope.data.newAddr = 0;
+  $scope.data.email = "";
+  $scope.form = {};
+  $scope.form.address = {};
+  $scope.customer = {};
+  $scope.customer.customer = {};
+  $scope.customerFound = false;
+  $scope.customerFindError = "";
+  $scope.package = 1;
 
-  $scope.showOrders = function(mnth){
-    $http.get("http://api.blackgarlic.id:7000/bo/history/"+mnth.month, $scope.newIngr).success(function(data, status) {
-        console.log(data);
-    });
-  }
+  $scope.findCustomer = function() {
+      var sendData = {"customer_email" : $scope.data.email};
+      $http.post("http://api.blackgarlic.id:7000/bo/customer/", sendData).success(function(data, status) {
+          if(data.customer == 0 ) {
+              $scope.customerFound = false;
+              $scope.customerFindError = "Email Not Found";
+          } else {
+              $scope.customer.customer = JSON.parse(data.customer);
+              if(data.address != 0)
+                $scope.customer.address = JSON.parse(data.address);
+              else
+                $scope.customer.address = {};
+
+              $scope.customerFound = true;
+              $scope.customerFindError = "";
+          }
+      });
+  };
+
+  $scope.choosePackage = function(type){
+      $scope.package = type;
+  };
+
+  $scope.placeOrder = function(){
+      var sendData = { "box_type" : $scope.package, "customer_id" : $scope.customer.customer.customer_id, "order_date" : $filter('date')($scope.data.order_date,'yyyy-MM-dd')}
+      if($scope.data.newAddr == 0) {
+        sendData.address = $scope.customer.address;
+        sendData.address.customer_name = $scope.customer.customer.first_name + " " + $scope.customer.customer.last_name;
+      } else {
+        sendData.address = $scope.form.address;
+      }
+      $http.post("http://api.blackgarlic.id:7000/bo/order/", sendData).success(function(data, status) {
+          $state.go('pending');
+      });
+  };
 });

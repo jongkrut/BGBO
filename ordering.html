@@ -1,0 +1,119 @@
+<nav class="navbar navbar-default navbar-inverse" ng-hide="statename == 'login'">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+      </a>
+
+      <ul class="nav navbar-nav">
+        <li><a ui-sref="pending">Order</a></li>
+        <li><a ui-sref="box">Box</a></li>
+        <li><a ui-sref="menu">Menu</a></li>
+        <li><a ui-sref="ordering">Ordering</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <form class="form-inline">
+    <div class="form-group">
+      <label for="inputemail">Email Address</label>
+      <input type="email" id="inputemail" style="margin:0 10px;width:350px" class="form-control" ng-model="data.email"/>
+    </div>
+    <button class="btn btn-info" ng-click="findCustomer();">Find Customer</button>
+    <span>{{customerFindError}}</span>
+  </form>
+
+
+  <div ng-show="customerFound" style="margin-top:25px">
+
+    <h3>Customer</h3>
+    <div class="row">
+
+      <div class="col-md-6">
+        <div class="panel panel-default" >
+          <div class="panel-heading">{{customer.customer.first_name}} {{customer.customer.last_name}} <{{customer.customer.customer_email}}></div>
+          <div class="panel-body">
+            {{customer.address.mobile}}<br/>
+            {{customer.address.address_content}}<br/>
+            <span ng-if="customer.address.city==1">Jakarta Pusat</span>
+            <span ng-if="customer.address.city==2">Jakarta Selatan</span>
+            <span ng-if="customer.address.city==3">Jakarta Barat</span>
+            <span ng-if="customer.address.city==4">Jakarta Utara</span>
+            <span ng-if="customer.address.city==5">Jakarta Timur</span>
+            <span ng-if="customer.address.city==6">Tangerang</span>
+            <span ng-if="customer.address.city==7">Bekasi</span>
+            <span ng-if="customer.address.city==8">Tangerang Selatan</span>
+            <span ng-if="customer.address.city==9">Depok</span>
+            {{customer.address.zipcode}}<br/>
+            {{customer.address.address_notes}}<br/>
+            <input type="checkbox" ng-model="data.newAddr"> Use Different Address
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-6" ng-if="data.newAddr==1">
+          <form id="form_newaddress">
+              <input type="text" placeholder="Name" class="form-control" ng-model="form.address.customer_name"/>
+              <textarea class="form-control" placeholder="Address" ng-model="form.address.address_content"></textarea>
+              <select class="form-control" ng-model="form.address.city">
+                <option value="0" disabled selected>Please choose an area</option>
+                <option value="1">Jakarta Pusat</option>
+                <option value="2">Jakarta Selatan</option>
+                <option value="3">Jakarta Barat</option>
+                <option value="4">Jakarta Utara</option>
+                <option value="5">Jakarta Timur</option>
+                <option value="6">Tangerang</option>
+                <option value="7">Bekasi</option>
+                <option value="8">Tangerang Selatan</option>
+                <option value="9">Depok</option>
+              </select>
+              <input type="text" placeholder="Postcode" class="form-control" ng-model="form.address.zipcode"/>
+              <input type="text" placeholder="Mobile" class="form-control" ng-model="form.address.mobile"/>
+              <textarea class="form-control" placeholder="Patokan" ng-model="form.address.address_notes"></textarea>
+          </form>
+      </div>
+    </div>
+
+    <h3>Package</h3>
+    <div class="row">
+
+      <div class="col-sm-6 col-md-6">
+        <div class="thumbnail">
+          <div class="caption">
+            <h3>2 Person</h3>
+            <p>Rp 325.000</p>
+            <p><button class="btn btn-primary" role="button" ng-click="choosePackage(1);">Choose</button></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-md-6">
+        <div class="thumbnail">
+          <div class="caption">
+            <h3>Family</h3>
+            <p>Rp 449.000</p>
+            <p><button class="btn btn-primary" role="button" ng-click="choosePackage(2);">Choose</button></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Delivery Date</h3>
+    <div style="display:inline-block; min-height:200px;">
+      <datepicker ng-model="data.order_date" min-date="minDate" show-weeks="false" class="well well-sm" custom-class="getDayClass(date, mode)"></datepicker>
+    </div>
+
+    <h3>Summary</h3>
+    <div class="well">
+        <table class="table">
+        <tr><th>Package<th>Order Date
+        <tr><td><span ng-if="package==1">2 Person</span>
+                <span ng-if="package==2">Family</span>
+            <td>{{data.order_date | date:'EEEE, dd-MM-yyyy'}}
+      </table>
+    </div>
+    <button class="btn btn-success btn-block" ng-click="placeOrder()";>Place Order</button>
+</div>
