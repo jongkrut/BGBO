@@ -182,6 +182,12 @@ app.controller('menuCtrl',function($scope,$http,$state){
   $scope.newMenu = function(){
     $state.go('menu-new');
   };
+  $scope.activate = function(id){
+    alert(id);
+  }
+  $scope.deactivate = function(id){
+    alert(id);
+  }
 });
 
 app.controller('boxCtrl',function($scope,$http){
@@ -313,10 +319,10 @@ app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal) {
   $scope.menu_id = $stateParams.menu_id;
   $scope.steps = {};
   $scope.form = {};
+  $scope.form.steps = {};
 
   $http.get("http://api.blackgarlic.id:7000/bo/menu/recipe/"+$scope.menu_id, $scope.newIngr).success(function(data, status) {
       $scope.steps = JSON.parse(data);
-      console.log(data);
   });
 
   $scope.saveThisStep = function() {
@@ -325,6 +331,15 @@ app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal) {
       "steps_order" : as.num, "menu_id" : $scope.menu_id, "content_id" : as.ind, "content_en" : as.eng
     });
   };
+
+  $scope.editStep = function(step) {
+    $scope.form.steps.num = $scope.steps[step].steps_order;
+    $scope.form.steps.ind = $scope.steps[step].content_id;
+    $scope.form.steps.eng = $scope.steps[step].content_en;
+  };
+
+  
+
 
   $scope.saveSteps = function() {
     console.log(JSON.stringify($scope.steps));

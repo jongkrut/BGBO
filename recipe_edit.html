@@ -20,6 +20,7 @@
 <div class="panel panel-default" ng-repeat="step in steps | orderBy:'steps_order' ">
     <div class="panel-heading">
         {{step.steps_order}}
+        <button class="btn btn-link pull-right" style='margin-top:-5px' ng-click="editStep($index)">Edit</button>
     </div>
     <div class="panel-body">
       <div class="col-lg-6">
@@ -36,24 +37,24 @@
   <form class="form form-inline">
     <div class="panel-heading">
       <div class="form-group">
-      <label for="exampleInputName2">Name </label>
+      <label for="exampleInputName2">Steps # </label>
         <input type="number" class="form-control" ng-model="form.steps.num" placeholder="Steps">
       </div>
     </div>
     <div class="panel-body">
       <div class="rows">
         <div class="col-lg-6">
-          <textarea class="form-control col-lg-6" ng-model="form.steps.ind">
+          <textarea class="form-control" style="width:100%" ng-model="form.steps.ind">
           </textarea>
         </div>
 
         <div class="col-lg-6">
-          <textarea class="form-control" ng-model="form.steps.eng">
+          <textarea class="form-control" style="width:100%" ng-model="form.steps.eng">
           </textarea>
         </div>
       </div>
     </div>
-    <button class="btn" ng-click="saveThisStep()">Save</button>
+    <button class="btn btn-primary btn-block" ng-click="saveThisStep()">Save</button>
   </form>
 </div>
 
