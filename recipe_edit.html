@@ -7,10 +7,9 @@
 
       <ul class="nav navbar-nav">
         <li><a ui-sref="pending">Order</a></li>
-
+        <li><a ui-sref="history">History</a></li>
         <li><a ui-sref="box">Box</a></li>
         <li><a ui-sref="menu">Menu</a></li>
-        <li><a ui-sref="ordering">Ordering</a></li>
       </ul>
     </div>
   </div>
@@ -18,10 +17,11 @@
 
 <div class="container-fluid">
 
+<button class="btn btn-success btn-block" style="margin-bottom:15px" ng-click="saveSteps();">Save</button>
 <div class="panel panel-default" ng-repeat="step in steps | orderBy:'steps_order' ">
     <div class="panel-heading">
         {{step.steps_order}}
-        <button class="btn btn-link pull-right" style='margin-top:-5px' ng-click="editStep($index)">Edit</button>
+        <button class="btn btn-link pull-right" style='margin-top:-5px' ng-click="editStep(step.steps_order)">Edit</button>
     </div>
     <div class="panel-body">
       <div class="col-lg-6">
@@ -34,7 +34,7 @@
     </div>
 </div>
 
-<div class="panel panel-default">
+<div class="panel panel-default" style="padding:10px 5px 10px">
   <form class="form form-inline">
     <div class="panel-heading">
       <div class="form-group">

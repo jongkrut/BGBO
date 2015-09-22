@@ -314,8 +314,7 @@ app.controller('menuNewCtrl',function($scope,$http,$modal) {
   };
 });
 
-
-app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal) {
+app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal,$state) {
   $scope.menu_id = $stateParams.menu_id;
   $scope.steps = {};
   $scope.form = {};
@@ -327,20 +326,40 @@ app.controller('recipeCtrl',function($scope,$http,$stateParams,$modal) {
 
   $scope.saveThisStep = function() {
     var as = angular.copy($scope.form.steps);
-    $scope.steps.push({
-      "steps_order" : as.num, "menu_id" : $scope.menu_id, "content_id" : as.ind, "content_en" : as.eng
-    });
+    var done = 0;
+    for(var i = 0; i < $scope.steps.length;i++)
+    {
+      if($scope.steps[i].steps_order == as.num) {
+        $scope.steps[i].steps_order = as.num;
+        $scope.steps[i].content_id = as.ind;
+        $scope.steps[i].content_en = as.eng;
+        done = 1;
+        break;
+      }
+    }
+    if(done == 0) {
+      $scope.steps.push({
+        "steps_order" : as.num, "menu_id" : $scope.menu_id, "content_id" : as.ind, "content_en" : as.eng
+      });
+    }
+
+    $scope.form.steps = {};
   };
 
   $scope.editStep = function(step) {
-    $scope.form.steps.num = $scope.steps[step].steps_order;
-    $scope.form.steps.ind = $scope.steps[step].content_id;
-    $scope.form.steps.eng = $scope.steps[step].content_en;
+    console.log(step);
+    $scope.form.steps.num = $scope.steps[step-1].steps_order;
+    $scope.form.steps.ind = $scope.steps[step-1].content_id;
+    $scope.form.steps.eng = $scope.steps[step-1].content_en;
   };
 
   $scope.saveSteps = function() {
-    console.log(JSON.stringify($scope.steps));
+    var datastring = { "menu_id" : $scope.menu_id, "steps" : $scope.steps};
+    $http.post("http://api.blackgarlic.id:7000/bo/menu/recipe/", datastring).success(function(data, status) {
+      $state.go('menu');
+    });
   };
+
 });
 
 app.controller('orderingCtrl',function($scope,$http,$filter,$state){
