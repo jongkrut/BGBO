@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">
-        <img alt="Brand" src="img/icon-invert.png" style="height:100%">
+        <img alt="Brand" src="img/icon-invert.png" style="height:100%"/>
       </a>
 
       <ul class="nav navbar-nav">
@@ -77,43 +77,20 @@
       </div>
     </div>
 
-    <h3>Package</h3>
-    <div class="row">
-
-      <div class="col-sm-6 col-md-6">
-        <div class="thumbnail">
-          <div class="caption">
-            <h3>2 Person</h3>
-            <p>Rp 325.000</p>
-            <p><button class="btn btn-primary" role="button" ng-click="choosePackage(1);">Choose</button></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-sm-6 col-md-6">
-        <div class="thumbnail">
-          <div class="caption">
-            <h3>Family</h3>
-            <p>Rp 449.000</p>
-            <p><button class="btn btn-primary" role="button" ng-click="choosePackage(2);">Choose</button></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <h3>Delivery Date</h3>
     <div style="display:inline-block; min-height:200px;">
-      <datepicker ng-model="data.order_date" min-date="minDate" show-weeks="false" class="well well-sm" custom-class="getDayClass(date, mode)"></datepicker>
+      <datepicker ng-change="getMenu()" ng-model="data.order_date" min-date="minDate" show-weeks="false" class="well well-sm" custom-class="getDayClass(date, mode)"></datepicker>
     </div>
 
-    <h3>Summary</h3>
-    <div class="well">
-        <table class="table">
-        <tr><th>Package<th>Order Date
-        <tr><td><span ng-if="package==1">2 Person</span>
-                <span ng-if="package==2">Family</span>
-            <td>{{data.order_date | date:'EEEE, dd-MM-yyyy'}}
-      </table>
+
+    <h3>Menu</h3>
+
+    <div class="checkbox" ng-repeat="menu in menus" >
+      <label >
+        <input type="checkbox" value="menu.menu_id" ng-model="form.menu[menu.menu_id]">
+        {{menu.menu_name}} <span ng-if="menu.menu_type==1" style="font-style:italic">(Express)</span><span ng-if="menu.menu_type==2" style="font-style:italic">(Family)</span>
+      </label>
     </div>
-    <button class="btn btn-success btn-block" ng-click="placeOrder()";>Place Order</button>
+
+    <button class="btn btn-success btn-block" ng-click="placeOrder()" style="margin:50px 0">Place Order</button>
 </div>

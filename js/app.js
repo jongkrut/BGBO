@@ -114,6 +114,7 @@ app.controller('pendingCtrl',function($scope,$http,$window){
 
   $http.get("http://api.blackgarlic.id:7000/bo/order/week/" + $scope.timerange).success(function(data, status) {
     $scope.data = JSON.parse(data);
+    console.log(data);
   });
 
   $scope.getNext = function() {
@@ -129,6 +130,7 @@ app.controller('pendingCtrl',function($scope,$http,$window){
     $http.get("http://api.blackgarlic.id:7000/bo/order/week/"+$scope.timerange).success(function(data, status) {
       $scope.data = JSON.parse(data);
       $scope.title = "Week of " + $scope.timerange;
+
     });
   };
 
@@ -165,6 +167,11 @@ app.controller('pendingCtrl',function($scope,$http,$window){
   $scope.exportCSV = function () {
     $window.location.href = "http://api.blackgarlic.id:7000/bo/orderdl/" + $scope.timerange;
   };
+  $scope.test = function() {
+      $http.post("http://api.blackgarlic.id:7000/bo/order/test/", { "order_id" : 1} ).success(function(data, status) {
+          console.log(data);
+      });
+  };
 });
 
 app.controller('exportCtrl',function($scope,$http){
@@ -183,10 +190,14 @@ app.controller('menuCtrl',function($scope,$http,$state){
     $state.go('menu-new');
   };
   $scope.activate = function(id){
-    alert(id);
+    $http.get("http://api.blackgarlic.id:7000/bo/menu/recipe/activate/"+id).success(function(data, status) {
+      $scope.data = JSON.parse(data);
+    });
   }
   $scope.deactivate = function(id){
-    alert(id);
+    $http.get("http://api.blackgarlic.id:7000/bo/menu/recipe/deactivate/"+id).success(function(data, status) {
+      $scope.data = JSON.parse(data);
+    });
   }
 });
 
@@ -369,11 +380,13 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
   $scope.data.email = "";
   $scope.form = {};
   $scope.form.address = {};
+  $scope.form.menu = {};
   $scope.customer = {};
   $scope.customer.customer = {};
   $scope.customerFound = false;
   $scope.customerFindError = "";
   $scope.package = 1;
+  $scope.menus = {};
 
   $scope.findCustomer = function() {
       var sendData = {"customer_email" : $scope.data.email};
@@ -393,21 +406,44 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
           }
       });
   };
-
-  $scope.choosePackage = function(type){
-      $scope.package = type;
+  $scope.getMenu = function() {
+    var date = $filter('date')($scope.data.order_date,'yyyy-MM-dd');
+    $http.get("http://api.blackgarlic.id:7000/bo/menu/ordering/"+$scope.package+"/"+date).success(function(data, status) {
+        $scope.menus = JSON.parse(data);
+    });
   };
 
   $scope.placeOrder = function(){
-      var sendData = { "box_type" : $scope.package, "customer_id" : $scope.customer.customer.customer_id, "order_date" : $filter('date')($scope.data.order_date,'yyyy-MM-dd')}
+      for(var item in $scope.form.menu){
+        console.log($scope.form.menu[item]);
+      }
+      var menuSel = Object.keys($scope.form.menu);
+      var grandtotal = 0;
+      for(var i =0;i<$scope.menus.length;i++){
+        if(menuSel.indexOf($scope.menus[i].menu_id.toString()) != -1){
+            if($scope.menus[i].menu_type == 1) {
+              grandtotal += 100000;
+            } else {
+              grandtotal += 150000;
+            }
+        }
+      }
+
+      console.log(grandtotal);
+
+      var sendData = { "box_type" : $scope.package, "customer_id" : $scope.customer.customer.customer_id, "order_date" : $filter('date')($scope.data.order_date,'yyyy-MM-dd'), "menu" : Object.keys($scope.form.menu)}
       if($scope.data.newAddr == 0) {
         sendData.address = $scope.customer.address;
         sendData.address.customer_name = $scope.customer.customer.first_name + " " + $scope.customer.customer.last_name;
       } else {
         sendData.address = $scope.form.address;
       }
+
+
+/*
       $http.post("http://api.blackgarlic.id:7000/bo/order/", sendData).success(function(data, status) {
           $state.go('pending');
       });
+*/
   };
 });

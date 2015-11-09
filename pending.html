@@ -15,7 +15,7 @@
   </div>
 </nav>
 
-<div class="container">
+<div class="container-fluid">
   <nav>
     <ul class="pager">
       <li class="previous"><a ng-click="getCurrent();" style="cursor:pointer"><span aria-hidden="true">&larr;</span> Previous Week</a></li>
@@ -24,18 +24,20 @@
     </ul>
   </nav>
   <a class="btn" ng-click="exportCSV()" >Export to CSV</a>
-
   <table class="table table-bordered">
     <thead>
-        <tr><th>ID<th>Date<th>Name<th>Grandtotal<th>Payment<th>Status<th>Action
+        <tr><th>ID<th>Date<th>Details<th>Menu<th>Grandtotal<th>Payment<th>Status<th>Action
     </thead>
     <tbody>
     <tr ng-repeat="order in data | orderBy:['-payment_status','-order_status','order_date']">
       <td>{{order.unique_id}}<br/>{{order.order_id}}
       <td>{{order.order_date | date:'EEE, dd MMM' }}
-      <td>{{order.customer_name}}<small> {{order.customer_email}}<br/>{{order.address_content}}</small>
+      <td>{{order.customer_name}}<small> {{order.customer_email}} {{order.mobile}}<br/>{{order.address_content}}</small>
+      <td><ol style="padding-left:10px;font-size:12px">
+            <li ng-repeat="menuname in order.menu_ids">{{menuname | limitTo : 30}}</li>
+          </ol>
       <td>{{order.grandtotal | number}}<br/>
-          <em><span ng-if="order.box_type==1">2 Person</span><span ng-if="order.box_type==2">Family</span></em>
+          <em><span ng-if="order.box_type==1">Express</span><span ng-if="order.box_type==2">Family</span></em>
       <td><ostat ng-switch="order.payment_status">
               <span ng-switch-when="0" style="color:red">Unpaid</span>
               <span ng-switch-when="1" style="color:green">Paid</span>
