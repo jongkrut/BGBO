@@ -33,6 +33,13 @@ app.config(function($stateProvider,$urlRouterProvider){
     data : {
       requireLogin : true
     }
+  }).state('logistic',{
+    url: "/logistic",
+    templateUrl : 'logistic.html',
+    controller : 'logisticCtrl',
+    data : {
+      requireLogin : true
+    }
   }).state('export',{
     url: "/export/:time",
     templateUrl : 'export.html',
@@ -167,8 +174,8 @@ app.controller('pendingCtrl',function($scope,$http,$window){
   $scope.exportCSV = function () {
     $window.location.href = "http://api.blackgarlic.id:7000/bo/orderdl/" + $scope.timerange;
   };
-  $scope.test = function() {
-      $http.post("http://api.blackgarlic.id:7000/bo/order/test/", { "order_id" : 1} ).success(function(data, status) {
+  $scope.sendEtobee = function(order_id) {
+      $http.post("http://api.blackgarlic.id:7000/bo/order/sendEtobee/", { "order_id" : 1} ).success(function(data, status) {
           console.log(data);
       });
   };
@@ -408,16 +415,19 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
   };
   $scope.getMenu = function() {
     var date = $filter('date')($scope.data.order_date,'yyyy-MM-dd');
-    $http.get("http://api.blackgarlic.id:7000/bo/menu/ordering/"+$scope.package+"/"+date).success(function(data, status) {
+    $http.get("http://api.blackgarlic.id:7000/bo/menu/ordering/"+date).success(function(data, status) {
         $scope.menus = JSON.parse(data);
     });
   };
 
   $scope.placeOrder = function(){
-      for(var item in $scope.form.menu){
-        console.log($scope.form.menu[item]);
+      var menuSel = [],box_id=0;
+      for (var variable in $scope.form.menu) {
+        if ($scope.form.menu.hasOwnProperty(variable) && $scope.form.menu[variable]==true) {
+          menuSel.push(variable);
+        }
       }
-      var menuSel = Object.keys($scope.form.menu);
+      box_id = $scope.menus[0].box_id;
       var grandtotal = 0;
       for(var i =0;i<$scope.menus.length;i++){
         if(menuSel.indexOf($scope.menus[i].menu_id.toString()) != -1){
@@ -429,9 +439,7 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
         }
       }
 
-      console.log(grandtotal);
-
-      var sendData = { "box_type" : $scope.package, "customer_id" : $scope.customer.customer.customer_id, "order_date" : $filter('date')($scope.data.order_date,'yyyy-MM-dd'), "menu" : Object.keys($scope.form.menu)}
+      var sendData = { "box_id" : box_id, "grandtotal" : grandtotal, "customer_id" : $scope.customer.customer.customer_id, "order_date" : $filter('date')($scope.data.order_date,'yyyy-MM-dd'), "menu" : menuSel}
       if($scope.data.newAddr == 0) {
         sendData.address = $scope.customer.address;
         sendData.address.customer_name = $scope.customer.customer.first_name + " " + $scope.customer.customer.last_name;
@@ -439,11 +447,55 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
         sendData.address = $scope.form.address;
       }
 
-
-/*
       $http.post("http://api.blackgarlic.id:7000/bo/order/", sendData).success(function(data, status) {
           $state.go('pending');
       });
-*/
   };
+});
+
+app.controller('logisticCtrl',function($scope,$http,$window){
+    $scope.data = {};
+    $scope.chkbox = {};
+
+    $scope.timerange = moment().format('YYYY-MM-DD');
+    $scope.title = "Delivery: " + $scope.timerange;
+
+    $http.get("http://api.blackgarlic.id:7000/bo/etobee/day/" + $scope.timerange).success(function(data, status) {
+      $scope.data = JSON.parse(data);
+    });
+
+    $scope.getNext = function() {
+      $scope.timerange = moment($scope.timerange).add(1,'d').format('YYYY-MM-DD');
+      console.log($scope.timerange);
+      $http.get("http://api.blackgarlic.id:7000/bo/etobee/day/"+$scope.timerange).success(function(data, status) {
+        $scope.data = JSON.parse(data);
+          $scope.title = "Delivery: " + $scope.timerange;
+      });
+    };
+
+    $scope.getCurrent = function() {
+      $scope.timerange = moment($scope.timerange).subtract(1,'d').format('YYYY-MM-DD');
+      $http.get("http://api.blackgarlic.id:7000/bo/etobee/day/"+$scope.timerange).success(function(data, status) {
+        $scope.data = JSON.parse(data);
+          $scope.title = "Delivery: " + $scope.timerange;
+      });
+    };
+
+    $scope.sendEtobee = function(order_id){
+      $http.post("http://api.blackgarlic.id:7000/bo/etobee/send/", { "order_id" : order_id, "date" : $scope.timerange  }).success(function(data, status) {
+          console.log(data);
+      });
+    };
+
+    $scope.sendAllEtobee = function(){
+      var orders = [];
+      for (var variable in $scope.chkbox) {
+        if ($scope.chkbox.hasOwnProperty(variable) && $scope.chkbox[variable]==true) {
+          orders.push(variable);
+        }
+      }
+      $http.post("http://api.blackgarlic.id:7000/bo/etobee/send-bulk/", { "orders" : orders, "date" : $scope.timerange }).success(function(data, status) {
+          console.log(data);
+      });
+    };
 });
