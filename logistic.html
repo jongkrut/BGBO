@@ -24,7 +24,7 @@
       <li class="next"><a ng-click="getNext();" style="cursor:pointer">Next Day <span aria-hidden="true">&rarr;</span></a></li>
     </ul>
   </nav>
-  <button class="btn btn-default" ng-click="sendAllEtobee()">Send to Etobee</button>
+  <button class="btn btn-default pull-right" ng-click="sendAllEtobee()">Send to Etobee</button>
   <table class="table table-bordered">
     <thead>
         <tr><th>ID<th>Date<th>Details<th>Grandtotal<th>Payment<th>Status<th>Checkbox<th>Action
@@ -33,7 +33,8 @@
     <tr ng-repeat="order in data | orderBy:['-payment_status','-order_status','order_date']">
       <td>{{order.unique_id}}<br/>{{order.order_id}}
       <td>{{order.order_date | date:'EEE, dd MMM' }}
-      <td>{{order.customer_name}}<small> {{order.customer_email}} {{order.mobile}}<br/>{{order.address_content}}</small>
+      <td>{{order.customer_name}}<small> {{order.customer_email}} {{order.mobile}}</small><br/>
+          <input class="form-control" type="text" ng-model="order.address_content"/>
       <td>{{order.grandtotal | number}}
       <td><ostat ng-switch="order.payment_status">
               <span ng-switch-when="0" style="color:red">Unpaid</span>
@@ -48,7 +49,7 @@
           </ostat><br/>
           <small>{{order.delivery_code}}</small>
       </td>
-      <td  style="text-align:center"><input type="checkbox" ng-model="chkbox[order.order_id]">
+      <td  style="text-align:center"><input type="checkbox" ng-model="order.chkbox">
       <td><button ng-click="sendEtobee(order.order_id)" ng-show="order.delivery_code == ''" class="btn">Send Etobee</button>
       </td>
     </tbody>

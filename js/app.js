@@ -456,6 +456,7 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
 app.controller('logisticCtrl',function($scope,$http,$window){
     $scope.data = {};
     $scope.chkbox = {};
+    $scope.chkboxval = {};
 
     $scope.timerange = moment().format('YYYY-MM-DD');
     $scope.title = "Delivery: " + $scope.timerange;
@@ -489,13 +490,16 @@ app.controller('logisticCtrl',function($scope,$http,$window){
 
     $scope.sendAllEtobee = function(){
       var orders = [];
-      for (var variable in $scope.chkbox) {
-        if ($scope.chkbox.hasOwnProperty(variable) && $scope.chkbox[variable]==true) {
-          orders.push(variable);
+      for (var variable in $scope.data) {
+        if ($scope.data.hasOwnProperty(variable) && $scope.data[variable].chkbox==true) {
+          orders.push({"order_id": $scope.data[variable].order_id, "address" : $scope.data[variable].address_content });
         }
       }
+      console.log(orders);
+      /*
       $http.post("http://api.blackgarlic.id:7000/bo/etobee/send-bulk/", { "orders" : orders, "date" : $scope.timerange }).success(function(data, status) {
           console.log(data);
       });
+      */
     };
 });
