@@ -35,7 +35,7 @@
       <td>{{order.order_date | date:'EEE, dd MMM' }}
       <td>{{order.customer_name}}<small> {{order.customer_email}} {{order.mobile}}<br/>{{order.address_content}}</small>
       <td><ol style="padding-left:10px;font-size:12px">
-            <li ng-repeat="menuname in order.menu_ids">{{menuname | limitTo : 30}}</li>
+            <li ng-repeat="menuname in order.menu_ids track by $index">{{menuname | limitTo : 30}}</li>
           </ol>
       <td>{{order.grandtotal | number}}
       <td><ostat ng-switch="order.payment_status">
@@ -59,7 +59,6 @@
                   <li><a ng-click="markComplete(order.order_id)" ng-show="order.order_status==1">Complete</a></li>
                   <li><a ng-click="markCancel(order.order_id)" ng-show="order.order_status == 0 && order.payment_status == 0">Cancel</a></li>
                   <li><a ng-click="markPaid(order.order_id)" ng-show="order.payment_status==0">Mark Paid</a></li>
-                  <li><a ng-click="sendEtobee(order.order_id)" ng-show="order.delivery_code == ''">Send Etobee</a></li>
               </ul>
           </div
       </td>

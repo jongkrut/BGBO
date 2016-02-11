@@ -121,7 +121,6 @@ app.controller('pendingCtrl',function($scope,$http,$window){
 
   $http.get("http://api.blackgarlic.id:7000/bo/order/week/" + $scope.timerange).success(function(data, status) {
     $scope.data = JSON.parse(data);
-    console.log(data);
   });
 
   $scope.getNext = function() {
@@ -394,6 +393,7 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
   $scope.customerFindError = "";
   $scope.package = 1;
   $scope.menus = {};
+  $scope.form = {};
 
   $scope.findCustomer = function() {
       var sendData = {"customer_email" : $scope.data.email};
@@ -417,27 +417,41 @@ app.controller('orderingCtrl',function($scope,$http,$filter,$state){
     var date = $filter('date')($scope.data.order_date,'yyyy-MM-dd');
     $http.get("http://api.blackgarlic.id:7000/bo/menu/ordering/"+date).success(function(data, status) {
         $scope.menus = JSON.parse(data);
+        $scope.form.menus = $scope.menus;
     });
   };
 
   $scope.placeOrder = function(){
-      var menuSel = [],box_id=0;
-      for (var variable in $scope.form.menu) {
-        if ($scope.form.menu.hasOwnProperty(variable) && $scope.form.menu[variable]==true) {
-          menuSel.push(variable);
+      var menuSel = [],box_id=0,grandtotal = 0;
+      for (var variable in $scope.form.menus) {
+        if ($scope.form.menus.hasOwnProperty(variable)) {
+          var item = $scope.form.menus[variable];
+          if(item.qty2 != undefined && item.qty2 != '') {
+            var qt = item.qty2;
+            for(var i =1;i<= qt;i++){
+              menuSel.push({"menu_id" : item.menu_id, "portion" : "2"});
+            }
+            if(item.menu_type === 3)
+              grandtotal = grandtotal + (item.qty2 * 100000);
+            else {
+              grandtotal = grandtotal + (item.qty2 * 80000);
+            }
+          }
+          if(item.qty4 != undefined && item.qty4 != '') {
+            var qt = item.qty4;
+            for(var i =1;i<= qt;i++){
+              menuSel.push({"menu_id" : item.menu_id, "portion" : "4"});
+            }
+            if(item.menu_type === 3)
+              grandtotal = grandtotal + (item.qty4 * 150000);
+            else {
+              grandtotal = grandtotal + (item.qty4 * 140000);
+            }
+          }
         }
       }
       box_id = $scope.menus[0].box_id;
-      var grandtotal = 0;
-      for(var i =0;i<$scope.menus.length;i++){
-        if(menuSel.indexOf($scope.menus[i].menu_id.toString()) != -1){
-            if($scope.menus[i].menu_type == 1) {
-              grandtotal += 100000;
-            } else {
-              grandtotal += 150000;
-            }
-        }
-      }
+
 
       var sendData = { "box_id" : box_id, "grandtotal" : grandtotal, "customer_id" : $scope.customer.customer.customer_id, "order_date" : $filter('date')($scope.data.order_date,'yyyy-MM-dd'), "menu" : menuSel}
       if($scope.data.newAddr == 0) {

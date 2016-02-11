@@ -82,15 +82,14 @@
       <datepicker ng-change="getMenu()" ng-model="data.order_date" min-date="minDate" show-weeks="false" class="well well-sm" custom-class="getDayClass(date, mode)"></datepicker>
     </div>
 
-
-    <h3>Menu</h3>
-
-    <div class="checkbox" ng-repeat="menu in menus" >
-      <label >
-        <input type="checkbox" value="menu.menu_id" ng-model="form.menu[menu.menu_id]">
-        {{menu.menu_name}} <span ng-if="menu.menu_type==1" style="font-style:italic">(Express)</span><span ng-if="menu.menu_type==2" style="font-style:italic">(Family)</span>
-      </label>
-    </div>
+    <table class="table table-responsive table-condensed">
+    <tr><th>Name<th>Type<th>2P<th>4P
+    <tr ng-repeat="menu in menus">
+      <td>{{menu.menu_name}}
+      <td><span ng-if="menu.menu_type==3" style="font-style:italic">Original</span><span ng-if="menu.menu_type==4" style="font-style:italic">Breakfast</span>
+      <td><input type="text" ng-model="menu.qty2" class="form-control">
+      <td><input type="text" ng-model="menu.qty4" class="form-control">
+    </table>
 
     <button class="btn btn-success btn-block" ng-click="placeOrder()" style="margin:50px 0">Place Order</button>
 </div>
